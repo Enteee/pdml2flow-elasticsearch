@@ -1,0 +1,30 @@
+language: python
+# VERSION START
+python:
+- '3.4'
+- '3.5'
+- 3.5-dev
+- nightly
+# VERSION END
+# Using trusty: https://docs.travis-ci.com/user/trusty-ci-environment
+sudo: required
+dist: trusty
+install:
+- pip install -r requirements.txt
+- pip install coveralls pypandoc docutils Pygments
+- sudo apt-get -qq update
+- sudo apt-get install -y pandoc
+script:
+- python setup.py check --restructuredtext --metadata -s
+- coverage run --source=pdml2flow setup.py test
+after_success:
+- coveralls
+before_deploy:
+deploy:
+  provider: pypi
+  user: Ente
+  password:
+    secure: KU4gvRQOmXR0QIjkL+zj4ozl3ATJPErQQY8c4Qax2iOVL71R9oEbpz6maRo2iOyul5Vn5ofCVz1OQ3dwp0o/M9zzQCg8NLEPVmUpKCD4Vx8wZX+6OguQhC37lN3lBrrR6c/dtmMrtqck+FSfM5AgWWdv2GUohicPeP+ZevUCgb+GZaiJ+mVaOkq9CbZCNRph8UiOVW5IKMlHsWnRRT+I5xoxoJOKJt/Kx/S9fyMYw5V2nKbcjZACANRIkN9Oq7lG8eANE+IfevwahprWVBlrQ2b1BbiIvP3sG141YXdkiBljmr/7Uh7oR2u88iiQuk/Xgs8eLd5e8jF0NweYEy7k7jLQxfNobKDcwcjURJUsDPZqAFRubkvdeeU5/fX9aXo3ktcVCEjPpb+86LuuJ2r5ONq6NslP+GxWN6CzXSmQ5sXehBHFsSzR99MAwCkaGuxOozhfaZY70I3oZa4mHWFfF89aKTTmtMfNMrWQqoLJQXL810BgAgyoiBP8HCh3o7cv/d8fuOdggX+MBLB3rC+kNHYOQt4DXWAYz4ONvDdre58yxEPEXxioICqvYeutI5vilFmVQ2tP7Tb1mw876HfUUm+unB0OhqUTTxzydX0d237IroFbRgC8F4JEmFPA8+dfYsuBtp4VtsIvgf7/gI8vQFm47JZnMOm1YD8HmmPYnec=
+  on:
+    tags: true
+    branch: master
