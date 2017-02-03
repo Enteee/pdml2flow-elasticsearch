@@ -1,5 +1,5 @@
-# pdml2flow-elasticsearch-elasticsearch [![PyPI version](https://badge.fury.io/py/pdml2flow-elasticsearch.svg)](https://badge.fury.io/py/pdml2flow-elasticsearch) 
-_Aggregates wireshark pdml to flows_
+# pdml2flow-elasticsearch [![PyPI version](https://badge.fury.io/py/pdml2flow-elasticsearch.svg)](https://badge.fury.io/py/pdml2flow-elasticsearch) 
+_Saves [pdml2flow] output in elasticsearch_
 
 | Branch  | Build  | Coverage |
 | ------- | ------ | -------- |
@@ -7,6 +7,8 @@ _Aggregates wireshark pdml to flows_
 | develop  | [![Build Status develop]](https://travis-ci.org/Enteee/pdml2flow-elasticsearch) | [![Coverage Status develop]](https://coveralls.io/github/Enteee/pdml2flow-elasticsearch?branch=develop) |
 
 ## Prerequisites
+
+* [pdml2flow]
 * [python]:
   - 3.4
   - 3.5
@@ -21,7 +23,6 @@ _Aggregates wireshark pdml to flows_
 
 ## Configuration
 
-ES_HOST
 | Environment variable | Description |
 | ------- | ------ |
 | ES_HOST | Elasticsearch hostname|
@@ -32,11 +33,9 @@ ES_HOST
 
 ## Example
 
+[pdml2flow]: https://github.com/Enteee/pdml2flow
 [python]: https://www.python.org/
 [wireshark]: https://www.wireshark.org/
-[dict2xml]: https://github.com/delfick/python-dict2xml
-[jq]: https://stedolan.github.io/jq/
-[FluentFlow]: https://github.com/t-moe/FluentFlow
 
 [Build Status master]: https://travis-ci.org/Enteee/pdml2flow-elasticsearch.svg?branch=master
 [Coverage Status master]: https://coveralls.io/repos/github/Enteee/pdml2flow-elasticsearch/badge.svg?branch=master
