@@ -22,7 +22,8 @@ setup(
     version = '0.0',
     packages = find_packages(exclude=['test']),
     install_requires = [
-        'pdml2flow'
+        'pdml2flow',
+        'python-dateutil'
     ],
     entry_points= {
         'pdml2flow.plugins': 'elasticsearch = plugins.elasticsearch:Elasticsearch'
