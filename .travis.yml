@@ -16,7 +16,7 @@ install:
 - sudo apt-get install -y pandoc
 script:
 - python setup.py check --restructuredtext --metadata -s
-- coverage run --source=pdml2flow setup.py test
+- coverage run --source=plugins setup.py test
 after_success:
 - coveralls
 before_deploy:
