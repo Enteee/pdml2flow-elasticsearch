@@ -19,7 +19,7 @@ except (OSError, ImportError):
 setup(
     name = 'pdml2flow-elasticsearch',
     keywords = 'pdml2flow plugin elasticsearch',
-    version = '0.0',
+    version = '0.1',
     packages = find_packages(exclude=['test']),
     install_requires = [
         'pdml2flow',
