@@ -3,7 +3,7 @@ TOPLEVEL=$(git rev-parse --show-toplevel)
 
 cat <<EOF > "${TOPLEVEL}/README.md"
 # pdml2flow-elasticsearch-elasticsearch [![PyPI version](https://badge.fury.io/py/pdml2flow-elasticsearch.svg)](https://badge.fury.io/py/pdml2flow-elasticsearch) 
-_Writes [pdml2flow] output to Elasticsearch _
+_Saves [pdml2flow] output in elasticsearch_
 
 | Branch  | Build  | Coverage |
 | ------- | ------ | -------- |
