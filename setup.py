@@ -31,7 +31,7 @@ setup(
     # metadata
     author = 'Mischa Lehmann',
     author_email = 'ducksource@duckpond.ch',
-    description = 'Aggregates wireshark pdml to flows',
+    description = 'Saves pdml2flow output in elasticsearch',
     long_description = long_description,
     include_package_data = True,
     license = 'Apache 2.0',

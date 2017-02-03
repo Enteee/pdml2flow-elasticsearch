@@ -1,12 +1,9 @@
 language: python
-# VERSION START
 python:
 - '3.4'
 - '3.5'
 - 3.5-dev
 - nightly
-# VERSION END
-# Using trusty: https://docs.travis-ci.com/user/trusty-ci-environment
 sudo: required
 dist: trusty
 install:
@@ -19,12 +16,12 @@ script:
 - coverage run --source=plugins setup.py test
 after_success:
 - coveralls
-before_deploy:
+before_deploy: 
 deploy:
   provider: pypi
   user: Ente
   password:
-    secure: KU4gvRQOmXR0QIjkL+zj4ozl3ATJPErQQY8c4Qax2iOVL71R9oEbpz6maRo2iOyul5Vn5ofCVz1OQ3dwp0o/M9zzQCg8NLEPVmUpKCD4Vx8wZX+6OguQhC37lN3lBrrR6c/dtmMrtqck+FSfM5AgWWdv2GUohicPeP+ZevUCgb+GZaiJ+mVaOkq9CbZCNRph8UiOVW5IKMlHsWnRRT+I5xoxoJOKJt/Kx/S9fyMYw5V2nKbcjZACANRIkN9Oq7lG8eANE+IfevwahprWVBlrQ2b1BbiIvP3sG141YXdkiBljmr/7Uh7oR2u88iiQuk/Xgs8eLd5e8jF0NweYEy7k7jLQxfNobKDcwcjURJUsDPZqAFRubkvdeeU5/fX9aXo3ktcVCEjPpb+86LuuJ2r5ONq6NslP+GxWN6CzXSmQ5sXehBHFsSzR99MAwCkaGuxOozhfaZY70I3oZa4mHWFfF89aKTTmtMfNMrWQqoLJQXL810BgAgyoiBP8HCh3o7cv/d8fuOdggX+MBLB3rC+kNHYOQt4DXWAYz4ONvDdre58yxEPEXxioICqvYeutI5vilFmVQ2tP7Tb1mw876HfUUm+unB0OhqUTTxzydX0d237IroFbRgC8F4JEmFPA8+dfYsuBtp4VtsIvgf7/gI8vQFm47JZnMOm1YD8HmmPYnec=
+    secure: YIBz88Y+ou7xjAa+lrZd/Kk+ZesJMxV77M7D2iWb1Tmo2evgzb8zlYFdO9LnMlQqHEYeLascjOH9xw0OGEEmPTHLYOG/xi16c4WH2HbwMW3Pd+yy7HwQ6aeJN20aiORX2UMxXa9bm0RfKbMVk1egpRdBSRn4ooHHemhXlzEfsAibYefBr/dHLezQ9I5rqa5NZvS13cEpPN7W7k+sqWGBSm65v8b5crpD1KPVTbmAh3jYz/9WzEgy9j4amKr1wd/1mKH8b55QtSTsPhIjF90wgL0OnnXAlkx7pgiuywZyrtSi4HuY9rVqXD85BZD32Vka8O/VDCTdoI/KzNSnnAXOAraSFOQMf8V/ozSFwwVAr/hf20rSRksqKQ+WGv/pCsIKZLs2UZEeXxE/zPFo4bNlN9SESyP696W0BNuCmFRpYwjOkMx/LFFDzAIIXCNLACJGuZ+hKeIzMDoFjylBt8UJBe8gxeRa9WBAZWgPRm0CZ2F4fnsGjhX/ZnnpsmNJs8TTMDjfBOG9Lx0Lu8HTavOpBK/5e8IumddSH9/OzJJQqG3Qy28QHKuQalWXnAWBzciB5Yrjwjt4kYK0X3uVzJ9NAXFQ1GWCeIXW/qKCu+p/ECAJrn0U3pIN0STLlQJ6d2B/Gjwj7U9qRB+HEAIeqklfc8GVWGGaLVxBQnXU6/1NjZU=
   on:
     tags: true
     branch: master
