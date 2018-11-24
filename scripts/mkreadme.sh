@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -exuo pipefail
 
-TOPLEVEL=$(git rev-parse --show-toplevel)
+TOPLEVEL="$( cd "$(dirname "$0")" ; pwd -P )/../"
+
+# Install plugin
+sudo pip install --upgrade -e "${TOPLEVEL}"
 
 cat <<EOF > "${TOPLEVEL}/README.md"
 # pdml2flow-elasticsearch [![PyPI version](https://badge.fury.io/py/pdml2flow-elasticsearch.svg)](https://badge.fury.io/py/pdml2flow-elasticsearch) 
@@ -14,7 +17,6 @@ _Saves [pdml2flow] output in Elasticsearch_
 
 ## Prerequisites
 
-* [pdml2flow]
 $( cat "${TOPLEVEL}/.travis.yml" | 
     sed -n -e '/# VERSION START/,/# VERSION END/ p' |
     sed -e '1d;$d' |
@@ -27,7 +29,7 @@ $( cat "${TOPLEVEL}/.travis.yml" |
 ## Installation
 
 \`\`\`shell
-    $ sudo pip install pdml2flow-elasticsearch
+$ sudo pip install pdml2flow-elasticsearch
 \`\`\`
 
 ## Usage
@@ -48,6 +50,10 @@ $ docker-compose up
 
 * Elasticsearch: http://localhost:9000
 * Kibana: http://localhost:5601
+
+\`\`\`yaml
+$(cat "${TOPLEVEL}/docker-compose.yml")
+\`\`\`
 
 [pdml2flow]: https://github.com/Enteee/pdml2flow
 [python]: https://www.python.org/

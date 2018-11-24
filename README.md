@@ -8,14 +8,13 @@ _Saves [pdml2flow] output in Elasticsearch_
 
 ## Prerequisites
 
-* [pdml2flow]
 
 * [pip](https://pypi.python.org/pypi/pip)
 
 ## Installation
 
 ```shell
-    $ sudo pip install pdml2flow-elasticsearch
+$ sudo pip install pdml2flow-elasticsearch
 ```
 
 ## Usage
@@ -32,7 +31,7 @@ usage: Elasticsearch output [-h] [--host ES_HOST] [--port ES_PORT]
                             [--timestamp-fmt ES_TIMESTAMP_FMT]
                             [--update-flows]
                             [--update-interval ES_UPDATE_FLOWS_INTERVAL__S]
-                            [--id-key ES_ID_KEY]
+                            [--use-time-now]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -59,7 +58,7 @@ optional arguments:
                         to date [default: False]
   --update-interval ES_UPDATE_FLOWS_INTERVAL__S
                         Elasticsearch update interval [default: 60]
-  --id-key ES_ID_KEY    Key to storea elasticsearch id [default: _es_id]
+  --use-time-now        Do not store frames [default: False]
 ```
 
 ## Example
@@ -73,6 +72,37 @@ $ docker-compose up
 
 * Elasticsearch: http://localhost:9000
 * Kibana: http://localhost:5601
+
+```yaml
+version: '2.2'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.5.1
+    container_name: elasticsearch
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.5.1
+    environment:
+      SERVER_NAME: localhost
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    ports:
+      - 5601:5601
+
+volumes:
+  esdata1:
+    driver: local
+```
 
 [pdml2flow]: https://github.com/Enteee/pdml2flow
 [python]: https://www.python.org/
