@@ -1,33 +1,179 @@
 # vim: set fenc=utf8 ts=4 sw=4 et :
-import http, json, os
+import http
+import json
+import os
+
+from argparse import ArgumentParser
 
 from datetime import *
 from dateutil.tz import *
 from base64 import b64encode
 
 from pdml2flow.logging import *
-from pdml2flow.plugin import *
+from pdml2flow.plugin import Plugin2
 
-ES_HOST = os.environ.get('ES_HOST', 'localhost')
-ES_PORT = os.environ.get('ES_PORT', '9200')
-ES_INDEX = os.environ.get('ES_INDEX', 'pdml2flow')
-ES_TYPE = os.environ.get('ES_TYPE', 'flow')
-ES_USER = os.environ.get('ES_USER', '')
-ES_PASSWORD = os.environ.get('ES_PASSWORD', '')
-ES_TIMESTAMP_FIELD = os.environ.get('ES_TIMESTAMP_FIELD', '@timestamp')
-ES_TIMESTAMP_FMT = os.environ.get('ES_TIMESTAMP_FMT', '%Y-%m-%dT%H:%M:%S%z')
-ES_UPDATE_INTERVAL__s = int(os.environ.get('ES_UPDATE_INTERVAL', '60'))
+def _make_argparse_help_safe(s):
+    """Make strings safe for argparse's help.
+
+    Argparse probably uses internally python2 style string formatting.
+    Make user supplied strings safe for this.
+    """
+    try:
+        return s.replace('%', '%%')
+    except AttributeError:
+        return s
 
 HEADER = { 
     'Content-type': 'application/json',
     'Accept': 'application/json',
 }
 
+argparser = ArgumentParser('Elasticsearch output')
+
+ES_HOST_DEFAULT = os.environ.get('ES_HOST', 'localhost')
+argparser.add_argument(
+    '--host',
+    dest = 'ES_HOST',
+    type = str,
+    default = ES_HOST_DEFAULT,
+    help = 'Elasticsearch api host [default: {}]'.format(
+        _make_argparse_help_safe(ES_HOST_DEFAULT)
+    ),
+)
+
+ES_PORT_DEFAULT = int(os.environ.get('ES_PORT', 9200))
+argparser.add_argument(
+    '--port',
+    dest = 'ES_PORT',
+    type = int,
+    default = ES_PORT_DEFAULT,
+    help = 'Elasticsearch api port [default: {}]'.format(
+        _make_argparse_help_safe(ES_PORT_DEFAULT)
+    ),
+)
+
+ES_FLOW_INDEX_DEFAULT = os.environ.get('ES_FLOW_INDEX', 'pdml2flow')
+argparser.add_argument(
+    '--flowindex',
+    dest = 'ES_FLOW_INDEX',
+    type = str,
+    default = ES_FLOW_INDEX_DEFAULT,
+    help = 'Index name [default: {}]'.format(
+        _make_argparse_help_safe(ES_FLOW_INDEX_DEFAULT)
+    ),
+)
+
+ES_FLOW_TYPE_DEFAULT = os.environ.get('ES_FLOW_TYPE', 'flow')
+argparser.add_argument(
+    '--flowtype',
+    dest = 'ES_FLOW_TYPE',
+    type = str,
+    default = ES_FLOW_TYPE_DEFAULT,
+    help = 'Type [default: {}]'.format(
+        _make_argparse_help_safe(ES_FLOW_TYPE_DEFAULT)
+    ),
+)
+
+ES_NO_FRAMES_DEFAULT = bool(os.environ.get('ES_NO_FRAMES', False))
+argparser.add_argument(
+    '--no-frames',
+    action = 'store_true',
+    dest = 'ES_NO_FRAMES',
+    default = ES_NO_FRAMES_DEFAULT,
+    help = 'Do not store frames [default: {}]'.format(
+        _make_argparse_help_safe(ES_NO_FRAMES_DEFAULT)
+    ),
+)
+
+ES_FRAME_INDEX_DEFAULT = os.environ.get('ES_FRAME_INDEX', 'pdml2frame')
+argparser.add_argument(
+    '--frameindex',
+    dest = 'ES_FRAME_INDEX',
+    type = str,
+    default = ES_FRAME_INDEX_DEFAULT,
+    help = 'Index name [default: {}]'.format(
+        _make_argparse_help_safe(ES_FRAME_INDEX_DEFAULT)
+    ),
+)
+
+ES_FRAME_TYPE_DEFAULT = os.environ.get('ES_FRAME_TYPE', 'frame')
+argparser.add_argument(
+    '--frametype',
+    dest = 'ES_FRAME_TYPE',
+    type = str,
+    default = ES_FRAME_TYPE_DEFAULT,
+    help = 'Type [default: {}]'.format(
+        _make_argparse_help_safe(ES_FRAME_TYPE_DEFAULT)
+    ),
+)
+
+ES_USER_DEFAULT = os.environ.get('ES_USER', None)
+argparser.add_argument(
+    '--user',
+    dest = 'ES_USER',
+    type = str,
+    default = ES_USER_DEFAULT,
+    help = 'Elasticsearch user [default: {}]'.format(
+        _make_argparse_help_safe(ES_USER_DEFAULT)
+    ),
+)
+
+ES_PASSWORD_DEFAULT = os.environ.get('ES_PASSWORD', None)
+argparser.add_argument(
+    '--password',
+    dest = 'ES_PASSWORD',
+    type = str,
+    default = ES_PASSWORD_DEFAULT,
+    help = 'Elasticsearch password [default: {}]'.format(
+        _make_argparse_help_safe(ES_PASSWORD_DEFAULT)
+    ),
+)
+
+ES_TIMESTAMP_FIELD_DEFAULT = os.environ.get('ES_TIMESTAMP_FIELD', '@timestamp')
+argparser.add_argument(
+    '--timestamp-field',
+    dest = 'ES_TIMESTAMP_FIELD',
+    type = str,
+    default = ES_TIMESTAMP_FIELD_DEFAULT,
+    help = 'Elasticsearch timestamp_field [default: {}]'.format(
+        _make_argparse_help_safe(ES_TIMESTAMP_FIELD_DEFAULT)
+    ),
+)
+
+ES_TIMESTAMP_FMT_DEFAULT = os.environ.get('ES_TIMESTAMP_FMT', '%Y-%m-%dT%H:%M:%S%z')
+argparser.add_argument(
+    '--timestamp-fmt',
+    dest = 'ES_TIMESTAMP_FMT',
+    type = str,
+    default = ES_TIMESTAMP_FMT_DEFAULT,
+    help = 'Elasticsearch timestamp format [default: {}]'.format(
+        _make_argparse_help_safe(ES_TIMESTAMP_FMT_DEFAULT)
+    ),
+)
+
+ES_UPDATE_FLOWS_DEFAULT = bool(os.environ.get('ES_UPDATE_FLOWS', False))
+argparser.add_argument(
+    '--update-flows',
+    action = 'store_true',
+    dest = 'ES_UPDATE_FLOWS',
+    default = ES_UPDATE_FLOWS_DEFAULT,
+    help = 'Wirte flows to elastic search early and keep them up to date [default: {}]'.format(
+        _make_argparse_help_safe(ES_UPDATE_FLOWS_DEFAULT)
+    ),
+)
+
+ES_UPDATE_FLOWS_INTERVAL_DEFAULT = int(os.environ.get('ES_UPDATE_FLOWS_INTERVAL', 60))
+argparser.add_argument(
+    '--update-interval',
+    dest = 'ES_UPDATE_FLOWS_INTERVAL__s',
+    type = int,
+    default = ES_UPDATE_FLOWS_INTERVAL_DEFAULT,
+    help = 'Elasticsearch update interval [default: {}]'.format(
+        _make_argparse_help_safe(ES_UPDATE_FLOWS_INTERVAL_DEFAULT)
+    ),
+)
+
 def connect_to_es():
-    if ES_USER:
-        HEADER['Authorization'] = 'Basic {}'.format(
-            b64encode('{}:{}'.format(ES_USER, ES_PASSWORD).encode()).decode("ascii")
-        )
     return http.client.HTTPConnection(ES_HOST, ES_PORT)
 
 def parse_response(response):
@@ -45,51 +191,98 @@ def parse_response(response):
     ))
     return response_json
 
-def update_flow(flow):
-    frames = flow.get_frames()
-    frames[ES_TIMESTAMP_FIELD] = datetime.now(
-        tzlocal()
-    ).strftime(ES_TIMESTAMP_FMT)
+class Elasticsearch(Plugin2):
 
-    conn = connect_to_es()
-    conn.request('PUT', '/{}-{}/{}/{}'.format(
-        ES_INDEX,
-        datetime.now().strftime('%F'),
-        ES_TYPE,
-        frames['ES_ID']
-    ), json.dumps(frames), HEADER)
-    response = parse_response(conn.getresponse())
-    frames['ES_ID'] = response['_id']
-    conn.close()
+    @staticmethod
+    def help():
+        return argparser.format_help()
 
-class Elasticsearch(Plugin1):
-    """Stores flows in elasticsearch."""
+    def __init__(self, *args):
+        self.conf = argparser.parse_args(args)
 
-    def flow_new(self, flow, frame):
-        frames = flow.get_frames()
-        frames[ES_TIMESTAMP_FIELD] = datetime.now(
+        debug(
+            '{}: {}'.format(
+                self.__class__.__name__,
+                self.conf
+            )
+        )
+
+        if self.conf.ES_USER:
+            HEADER['Authorization'] = 'Basic {}'.format(
+                b64encode('{}:{}'.format(
+                    self.conf.ES_USER,
+                    self.conf.ES_PASSWORD
+                ).encode()).decode("ascii")
+            )
+
+    def _save(self, obj, es_index, es_type):
+        """Save object in Elasticsearch."""
+
+        # update timestamp
+        obj[self.conf.ES_TIMESTAMP_FIELD] = datetime.now(
             tzlocal()
-        ).strftime(ES_TIMESTAMP_FMT)
+        ).strftime(self.conf.ES_TIMESTAMP_FMT)
 
-        conn = connect_to_es()
-        conn.request('POST', '/{}-{}/{}/'.format(
-            ES_INDEX,
-            datetime.now().strftime('%F'),
-            ES_TYPE
-        ), json.dumps(frames), HEADER)
+        # store in es
+        obj_json = json.dumps(obj)
+        conn = http.client.HTTPConnection(self.conf.ES_HOST, self.conf.ES_PORT)
+        try:
+            # try updating first
+            conn.request('PUT', '/{}-{}/{}/{}'.format(
+                es_index,
+                datetime.now().strftime('%F'),
+                es_type,
+                obj['ES_ID']
+            ), obj_json, HEADER)
+        except KeyError:
+            # update failed, add instead
+            conn.request('POST', '/{}-{}/{}/'.format(
+                es_index,
+                datetime.now().strftime('%F'),
+                es_type
+            ), obj_json, HEADER)
+
+        # update ES_ID
         response = parse_response(conn.getresponse())
-        frames['ES_ID'] = response['_id']
+        obj['ES_ID'] = response['_id']
         conn.close()
 
+    def flow_new(self, flow, frame):
+        self._save(
+            flow.frames,
+            self.conf.ES_FLOW_INDEX,
+            self.conf.ES_FLOW_TYPE
+        )
+
+    def flow_end(self, flow):
+        self._save(
+            flow.frames,
+            self.conf.ES_FLOW_INDEX,
+            self.conf.ES_FLOW_TYPE
+        )
+
     def frame_new(self, frame, flow):
-        frames = flow.get_frames()
+        frames = flow.frames
+
         if (datetime.now(
             tzlocal()
         ) - datetime.strptime(
-            frames[ES_TIMESTAMP_FIELD], 
-            ES_TIMESTAMP_FMT
-        )).seconds >= ES_UPDATE_INTERVAL__s:
-            update_flow(flow)
+            frames[self.conf.ES_TIMESTAMP_FIELD], 
+            self.conf.ES_TIMESTAMP_FMT
+        )).seconds >= self.conf.ES_UPDATE_FLOWS_INTERVAL__s:
+            self._save(
+                flow.frames,
+                self.conf.ES_FLOW_INDEX,
+                self.conf.ES_FLOW_TYPE
+            )
 
-    def flow_expired(self, flow):
-        update_flow(flow)
+        if not self.conf.ES_NO_FRAMES:
+            self._save(
+                frame,
+                self.conf.ES_FRAME_INDEX,
+                self.conf.ES_FRAME_TYPE
+            )
+
+
+if __name__ == '__main__':
+    print(Elasticsearch.help())

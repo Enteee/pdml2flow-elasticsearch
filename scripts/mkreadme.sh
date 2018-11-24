@@ -1,9 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -exuo pipefail
+
 TOPLEVEL=$(git rev-parse --show-toplevel)
 
 cat <<EOF > "${TOPLEVEL}/README.md"
 # pdml2flow-elasticsearch [![PyPI version](https://badge.fury.io/py/pdml2flow-elasticsearch.svg)](https://badge.fury.io/py/pdml2flow-elasticsearch) 
-_Saves [pdml2flow] output in elasticsearch_
+_Saves [pdml2flow] output in Elasticsearch_
 
 | Branch  | Build  | Coverage |
 | ------- | ------ | -------- |
@@ -23,21 +25,29 @@ $( cat "${TOPLEVEL}/.travis.yml" |
 * [pip](https://pypi.python.org/pypi/pip)
 
 ## Installation
+
 \`\`\`shell
     $ sudo pip install pdml2flow-elasticsearch
 \`\`\`
 
-## Configuration
+## Usage
 
-| Environment variable | Description |
-| ------- | ------ |
-| ES_HOST | Elasticsearch hostname|
-| ES_PORT | Elasticsearch port number |
-| ES_INDEX | Elasticsearch index name |
-| ES_TYPE | Elasticsearch type name |
-
+\`\`\`shell
+$ pdml2flow +elasticsearch -h
+$(pdml2flow +elasticsearch -h)
+\`\`\`
 
 ## Example
+
+## Test environment
+
+\`\`\`shell
+$ sysctl -w vm.max_map_count=262144
+$ docker-compose up
+\`\`\`
+
+* Elasticsearch: http://localhost:9000
+* Kibana: http://localhost:5601
 
 [pdml2flow]: https://github.com/Enteee/pdml2flow
 [python]: https://www.python.org/
