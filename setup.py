@@ -22,7 +22,7 @@ setup(
     version = '1.0',
     packages = find_packages(exclude=['test']),
     install_requires = [
-        'pdml2flow>=5.0',
+        'pdml2flow>=5.1',
         'python-dateutil'
     ],
     entry_points= {

@@ -5,11 +5,13 @@ import os
 
 from argparse import ArgumentParser
 
-from datetime import *
-from dateutil.tz import *
+from datetime import datetime
+from dateutil.tz import tzlocal
 from base64 import b64encode
 
 from pdml2flow.logging import *
+from pdml2flow.conf import Conf
+from pdml2flow.autovivification import getitem_by_path
 from pdml2flow.plugin import Plugin2
 
 def _make_argparse_help_safe(s):
@@ -173,14 +175,14 @@ argparser.add_argument(
     ),
 )
 
-ES_ID_KEY_DEFAULT = os.environ.get('ES_ID_KEY', '_es_id')
+ES_USE_TIME_NOW_DEFAULT = bool(os.environ.get('ES_USE_TIME_NOW', False))
 argparser.add_argument(
-    '--id-key',
-    dest = 'ES_ID_KEY',
-    type = str,
-    default = ES_ID_KEY_DEFAULT,
-    help = 'Key to storea elasticsearch id [default: {}]'.format(
-        _make_argparse_help_safe(ES_ID_KEY_DEFAULT)
+    '--use-time-now',
+    action = 'store_true',
+    dest = 'ES_USE_TIME_NOW',
+    default = ES_USE_TIME_NOW_DEFAULT,
+    help = 'Do not store frames [default: {}]'.format(
+        _make_argparse_help_safe(ES_USE_TIME_NOW_DEFAULT)
     ),
 )
 
@@ -200,6 +202,8 @@ def parse_response(response):
     return response_json
 
 class Elasticsearch(Plugin2):
+
+    OBJECT_ID = {}
 
     @staticmethod
     def help():
@@ -223,48 +227,69 @@ class Elasticsearch(Plugin2):
                 ).encode()).decode("ascii")
             )
 
-    def _save(self, obj, es_index, es_type):
+    def _save(self, obj, time, es_index, es_type):
         """Save object in Elasticsearch."""
 
-        # update timestamp
-        obj[self.conf.ES_TIMESTAMP_FIELD] = datetime.now(
-            tzlocal()
-        ).strftime(self.conf.ES_TIMESTAMP_FMT)
+        # update timestamp with time now
+        if self.conf.ES_USE_TIME_NOW:
+            time = datetime.now()
+
+        obj[self.conf.ES_TIMESTAMP_FIELD] = time.replace(
+            tzinfo=tzlocal()
+        ).strftime(
+            self.conf.ES_TIMESTAMP_FMT
+        )
 
         # store in es
         obj_json = json.dumps(obj)
-        conn = http.client.HTTPConnection(self.conf.ES_HOST, self.conf.ES_PORT)
+        conn = http.client.HTTPConnection(
+            self.conf.ES_HOST,
+            self.conf.ES_PORT
+        )
         try:
-            es_id = obj[self.conf.ES_ID_KEY]
-        except KeyError:
+            es_id = Elasticsearch.OBJECT_ID[obj]
+        except (KeyError, TypeError):
             es_id = None
 
         if not es_id:
             # not in index, add object now
-            conn.request('POST', '/{}-{}/{}/'.format(
-                es_index,
-                datetime.now().strftime('%F'),
-                es_type
-            ), obj_json, HEADER)
+            conn.request(
+                'POST', '/{}-{}/{}/'.format(
+                    es_index,
+                    datetime.now().strftime('%F'),
+                    es_type
+                ),
+                obj_json,
+                HEADER
+            )
         else:
             # try updating
-            conn.request('PUT', '/{}-{}/{}/{}'.format(
-                es_index,
-                datetime.now().strftime('%F'),
-                es_type,
-                es_id,
-            ), obj_json, HEADER)
+            conn.request(
+                'PUT', '/{}-{}/{}/{}'.format(
+                    es_index,
+                    datetime.now().strftime('%F'),
+                    es_type,
+                    es_id,
+                ),
+                obj_json,
+                HEADER
+            )
 
         # update ES_ID
         response = parse_response(conn.getresponse())
-        obj[self.conf.ES_ID_KEY] = response['_id']
-        debug('obj', obj)
+        try:
+            Elasticsearch.OBJECT_ID[obj] = response['_id']
+        except TypeError:
+            pass
         conn.close()
 
     def frame_new(self, frame, flow):
         if not self.conf.ES_NO_FRAMES:
             self._save(
                 frame,
+                datetime.utcfromtimestamp(
+                    getitem_by_path(frame, Conf.FRAME_TIME)
+                ),
                 self.conf.ES_FRAME_INDEX,
                 self.conf.ES_FRAME_TYPE
             )
@@ -281,6 +306,7 @@ class Elasticsearch(Plugin2):
             )).seconds >= self.conf.ES_UPDATE_FLOWS_INTERVAL__s:
                 self._save(
                     flow.frames,
+                    datetime.utcfromtimestamp(flow.first_frame_time),
                     self.conf.ES_FLOW_INDEX,
                     self.conf.ES_FLOW_TYPE
                 )
@@ -290,6 +316,7 @@ class Elasticsearch(Plugin2):
         if self.conf.ES_UPDATE_FLOWS:
             self._save(
                 flow.frames,
+                datetime.utcfromtimestamp(flow.first_frame_time),
                 self.conf.ES_FLOW_INDEX,
                 self.conf.ES_FLOW_TYPE
             )
@@ -297,6 +324,7 @@ class Elasticsearch(Plugin2):
     def flow_end(self, flow):
         self._save(
             flow.frames,
+            datetime.utcfromtimestamp(flow.first_frame_time),
             self.conf.ES_FLOW_INDEX,
             self.conf.ES_FLOW_TYPE
         )
