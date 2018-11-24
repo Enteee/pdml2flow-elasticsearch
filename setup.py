@@ -19,10 +19,10 @@ except (OSError, ImportError):
 setup(
     name = 'pdml2flow-elasticsearch',
     keywords = 'pdml2flow plugin elasticsearch',
-    version = '0.1',
+    version = '1.0',
     packages = find_packages(exclude=['test']),
     install_requires = [
-        'pdml2flow',
+        'pdml2flow>=5.0',
         'python-dateutil'
     ],
     entry_points= {
