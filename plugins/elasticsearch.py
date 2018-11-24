@@ -173,8 +173,16 @@ argparser.add_argument(
     ),
 )
 
-def connect_to_es():
-    return http.client.HTTPConnection(ES_HOST, ES_PORT)
+ES_ID_KEY_DEFAULT = os.environ.get('ES_ID_KEY', '_es_id')
+argparser.add_argument(
+    '--id-key',
+    dest = 'ES_ID_KEY',
+    type = str,
+    default = ES_ID_KEY_DEFAULT,
+    help = 'Key to storea elasticsearch id [default: {}]'.format(
+        _make_argparse_help_safe(ES_ID_KEY_DEFAULT)
+    ),
+)
 
 def parse_response(response):
     response_json = json.loads(response.read())
@@ -227,32 +235,64 @@ class Elasticsearch(Plugin2):
         obj_json = json.dumps(obj)
         conn = http.client.HTTPConnection(self.conf.ES_HOST, self.conf.ES_PORT)
         try:
-            # try updating first
-            conn.request('PUT', '/{}-{}/{}/{}'.format(
-                es_index,
-                datetime.now().strftime('%F'),
-                es_type,
-                obj['ES_ID']
-            ), obj_json, HEADER)
+            es_id = obj[self.conf.ES_ID_KEY]
         except KeyError:
-            # update failed, add instead
+            es_id = None
+
+        if not es_id:
+            # not in index, add object now
             conn.request('POST', '/{}-{}/{}/'.format(
                 es_index,
                 datetime.now().strftime('%F'),
                 es_type
             ), obj_json, HEADER)
+        else:
+            # try updating
+            conn.request('PUT', '/{}-{}/{}/{}'.format(
+                es_index,
+                datetime.now().strftime('%F'),
+                es_type,
+                es_id,
+            ), obj_json, HEADER)
 
         # update ES_ID
         response = parse_response(conn.getresponse())
-        obj['ES_ID'] = response['_id']
+        obj[self.conf.ES_ID_KEY] = response['_id']
+        debug('obj', obj)
         conn.close()
 
+    def frame_new(self, frame, flow):
+        if not self.conf.ES_NO_FRAMES:
+            self._save(
+                frame,
+                self.conf.ES_FRAME_INDEX,
+                self.conf.ES_FRAME_TYPE
+            )
+        if self.conf.ES_UPDATE_FLOWS:
+            try:
+                frames = flow.frames
+            except AttributeError:
+                return
+            if (datetime.now(
+                tzlocal()
+            ) - datetime.strptime(
+                frames[self.conf.ES_TIMESTAMP_FIELD],
+                self.conf.ES_TIMESTAMP_FMT
+            )).seconds >= self.conf.ES_UPDATE_FLOWS_INTERVAL__s:
+                self._save(
+                    flow.frames,
+                    self.conf.ES_FLOW_INDEX,
+                    self.conf.ES_FLOW_TYPE
+                )
+
+
     def flow_new(self, flow, frame):
-        self._save(
-            flow.frames,
-            self.conf.ES_FLOW_INDEX,
-            self.conf.ES_FLOW_TYPE
-        )
+        if self.conf.ES_UPDATE_FLOWS:
+            self._save(
+                flow.frames,
+                self.conf.ES_FLOW_INDEX,
+                self.conf.ES_FLOW_TYPE
+            )
 
     def flow_end(self, flow):
         self._save(
@@ -260,28 +300,6 @@ class Elasticsearch(Plugin2):
             self.conf.ES_FLOW_INDEX,
             self.conf.ES_FLOW_TYPE
         )
-
-    def frame_new(self, frame, flow):
-        frames = flow.frames
-
-        if (datetime.now(
-            tzlocal()
-        ) - datetime.strptime(
-            frames[self.conf.ES_TIMESTAMP_FIELD], 
-            self.conf.ES_TIMESTAMP_FMT
-        )).seconds >= self.conf.ES_UPDATE_FLOWS_INTERVAL__s:
-            self._save(
-                flow.frames,
-                self.conf.ES_FLOW_INDEX,
-                self.conf.ES_FLOW_TYPE
-            )
-
-        if not self.conf.ES_NO_FRAMES:
-            self._save(
-                frame,
-                self.conf.ES_FRAME_INDEX,
-                self.conf.ES_FRAME_TYPE
-            )
 
 
 if __name__ == '__main__':

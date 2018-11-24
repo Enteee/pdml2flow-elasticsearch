@@ -26,7 +26,13 @@ usage: Elasticsearch output [-h] [--host ES_HOST] [--port ES_PORT]
                             [--flowindex ES_FLOW_INDEX]
                             [--flowtype ES_FLOW_TYPE] [--no-frames]
                             [--frameindex ES_FRAME_INDEX]
-                            [--frametype ES_FRAME_TYPE]
+                            [--frametype ES_FRAME_TYPE] [--user ES_USER]
+                            [--password ES_PASSWORD]
+                            [--timestamp-field ES_TIMESTAMP_FIELD]
+                            [--timestamp-fmt ES_TIMESTAMP_FMT]
+                            [--update-flows]
+                            [--update-interval ES_UPDATE_FLOWS_INTERVAL__S]
+                            [--id-key ES_ID_KEY]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -41,6 +47,19 @@ optional arguments:
                         Index name [default: pdml2frame]
   --frametype ES_FRAME_TYPE
                         Type [default: frame]
+  --user ES_USER        Elasticsearch user [default: None]
+  --password ES_PASSWORD
+                        Elasticsearch password [default: None]
+  --timestamp-field ES_TIMESTAMP_FIELD
+                        Elasticsearch timestamp_field [default: @timestamp]
+  --timestamp-fmt ES_TIMESTAMP_FMT
+                        Elasticsearch timestamp format [default:
+                        %Y-%m-%dT%H:%M:%S%z]
+  --update-flows        Wirte flows to elastic search early and keep them up
+                        to date [default: False]
+  --update-interval ES_UPDATE_FLOWS_INTERVAL__S
+                        Elasticsearch update interval [default: 60]
+  --id-key ES_ID_KEY    Key to storea elasticsearch id [default: _es_id]
 ```
 
 ## Example
