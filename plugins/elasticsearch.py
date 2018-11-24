@@ -28,8 +28,10 @@ argparser.add_argument(
     dest = 'ES_HOST',
     type = str,
     default = ES_HOST_DEFAULT,
-    help = 'Elasticsearch api host [default: {}]'.format(
-        make_argparse_help_safe(ES_HOST_DEFAULT)
+    help = make_argparse_help_safe(
+        'Elasticsearch api host [default: {}]'.format(
+            ES_HOST_DEFAULT
+        )
     ),
 )
 
@@ -39,8 +41,10 @@ argparser.add_argument(
     dest = 'ES_PORT',
     type = int,
     default = ES_PORT_DEFAULT,
-    help = 'Elasticsearch api port [default: {}]'.format(
-        make_argparse_help_safe(ES_PORT_DEFAULT)
+    help = make_argparse_help_safe(
+        'Elasticsearch api port [default: {}]'.format(
+            ES_PORT_DEFAULT
+        )
     ),
 )
 
@@ -50,8 +54,10 @@ argparser.add_argument(
     dest = 'ES_FLOW_INDEX',
     type = str,
     default = ES_FLOW_INDEX_DEFAULT,
-    help = 'Index name [default: {}]'.format(
-        make_argparse_help_safe(ES_FLOW_INDEX_DEFAULT)
+    help = make_argparse_help_safe(
+        'Index name [default: {}]'.format(
+            ES_FLOW_INDEX_DEFAULT
+        )
     ),
 )
 
@@ -61,8 +67,10 @@ argparser.add_argument(
     dest = 'ES_FLOW_TYPE',
     type = str,
     default = ES_FLOW_TYPE_DEFAULT,
-    help = 'Type [default: {}]'.format(
-        make_argparse_help_safe(ES_FLOW_TYPE_DEFAULT)
+    help = make_argparse_help_safe(
+        'Type [default: {}]'.format(
+            ES_FLOW_TYPE_DEFAULT
+        )
     ),
 )
 
@@ -72,8 +80,10 @@ argparser.add_argument(
     action = 'store_true',
     dest = 'ES_NO_FRAMES',
     default = ES_NO_FRAMES_DEFAULT,
-    help = 'Do not store frames [default: {}]'.format(
-        make_argparse_help_safe(ES_NO_FRAMES_DEFAULT)
+    help = make_argparse_help_safe(
+        'Do not store frames [default: {}]'.format(
+            ES_NO_FRAMES_DEFAULT
+        )
     ),
 )
 
@@ -83,8 +93,10 @@ argparser.add_argument(
     dest = 'ES_FRAME_INDEX',
     type = str,
     default = ES_FRAME_INDEX_DEFAULT,
-    help = 'Index name [default: {}]'.format(
-        make_argparse_help_safe(ES_FRAME_INDEX_DEFAULT)
+    help = make_argparse_help_safe(
+        'Index name [default: {}]'.format(
+            ES_FRAME_INDEX_DEFAULT
+        )
     ),
 )
 
@@ -94,8 +106,10 @@ argparser.add_argument(
     dest = 'ES_FRAME_TYPE',
     type = str,
     default = ES_FRAME_TYPE_DEFAULT,
-    help = 'Type [default: {}]'.format(
-        make_argparse_help_safe(ES_FRAME_TYPE_DEFAULT)
+    help = make_argparse_help_safe(
+        'Type [default: {}]'.format(
+            ES_FRAME_TYPE_DEFAULT
+        )
     ),
 )
 
@@ -105,8 +119,10 @@ argparser.add_argument(
     dest = 'ES_USER',
     type = str,
     default = ES_USER_DEFAULT,
-    help = 'Elasticsearch user [default: {}]'.format(
-        make_argparse_help_safe(ES_USER_DEFAULT)
+    help = make_argparse_help_safe(
+        'Elasticsearch user [default: {}]'.format(
+            ES_USER_DEFAULT
+        )
     ),
 )
 
@@ -116,8 +132,10 @@ argparser.add_argument(
     dest = 'ES_PASSWORD',
     type = str,
     default = ES_PASSWORD_DEFAULT,
-    help = 'Elasticsearch password [default: {}]'.format(
-        make_argparse_help_safe(ES_PASSWORD_DEFAULT)
+    help = make_argparse_help_safe(
+        'Elasticsearch password [default: {}]'.format(
+            ES_PASSWORD_DEFAULT
+        )
     ),
 )
 
@@ -127,8 +145,10 @@ argparser.add_argument(
     dest = 'ES_TIMESTAMP_FIELD',
     type = str,
     default = ES_TIMESTAMP_FIELD_DEFAULT,
-    help = 'Elasticsearch timestamp_field [default: {}]'.format(
-        make_argparse_help_safe(ES_TIMESTAMP_FIELD_DEFAULT)
+    help = make_argparse_help_safe(
+        'Elasticsearch timestamp_field [default: {}]'.format(
+            ES_TIMESTAMP_FIELD_DEFAULT
+        )
     ),
 )
 
@@ -138,8 +158,10 @@ argparser.add_argument(
     dest = 'ES_TIMESTAMP_FMT',
     type = str,
     default = ES_TIMESTAMP_FMT_DEFAULT,
-    help = 'Elasticsearch timestamp format [default: {}]'.format(
-        make_argparse_help_safe(ES_TIMESTAMP_FMT_DEFAULT)
+    help = make_argparse_help_safe(
+        'Elasticsearch timestamp format [default: {}]'.format(
+            ES_TIMESTAMP_FMT_DEFAULT
+        )
     ),
 )
 
@@ -149,8 +171,10 @@ argparser.add_argument(
     action = 'store_true',
     dest = 'ES_UPDATE_FLOWS',
     default = ES_UPDATE_FLOWS_DEFAULT,
-    help = 'Wirte flows to elastic search early and keep them up to date [default: {}]'.format(
-        make_argparse_help_safe(ES_UPDATE_FLOWS_DEFAULT)
+    help = make_argparse_help_safe(
+        'Wirte flows to elastic search early and keep them up to date [default: {}]'.format(
+            ES_UPDATE_FLOWS_DEFAULT
+        )
     ),
 )
 
@@ -160,8 +184,10 @@ argparser.add_argument(
     dest = 'ES_UPDATE_FLOWS_INTERVAL__s',
     type = int,
     default = ES_UPDATE_FLOWS_INTERVAL_DEFAULT,
-    help = 'Elasticsearch update interval [default: {}]'.format(
-        make_argparse_help_safe(ES_UPDATE_FLOWS_INTERVAL_DEFAULT)
+    help = make_argparse_help_safe(
+        'Elasticsearch update interval [default: {}]'.format(
+            ES_UPDATE_FLOWS_INTERVAL_DEFAULT
+        )
     ),
 )
 
@@ -171,8 +197,10 @@ argparser.add_argument(
     action = 'store_true',
     dest = 'ES_USE_TIME_NOW',
     default = ES_USE_TIME_NOW_DEFAULT,
-    help = 'Do not store frames [default: {}]'.format(
-        make_argparse_help_safe(ES_USE_TIME_NOW_DEFAULT)
+    help = make_argparse_help_safe(
+        'Do not store frames [default: {}]'.format(
+            ES_USE_TIME_NOW_DEFAULT
+        )
     ),
 )
 
