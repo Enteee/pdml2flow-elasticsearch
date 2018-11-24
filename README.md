@@ -65,13 +65,7 @@ optional arguments:
 
 ## Test environment
 
-```shell
-$ sysctl -w vm.max_map_count=262144
-$ docker-compose up
-```
-
-* Elasticsearch: http://localhost:9000
-* Kibana: http://localhost:5601
+docker-compose.yml:
 
 ```yaml
 version: '2.2'
@@ -103,6 +97,14 @@ volumes:
   esdata1:
     driver: local
 ```
+
+```shell
+$ sysctl -w vm.max_map_count=262144
+$ docker-compose up
+```
+
+* Elasticsearch: http://localhost:9000
+* Kibana: http://localhost:5601
 
 [pdml2flow]: https://github.com/Enteee/pdml2flow
 [python]: https://www.python.org/

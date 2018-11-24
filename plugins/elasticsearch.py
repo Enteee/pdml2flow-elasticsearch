@@ -10,20 +10,10 @@ from dateutil.tz import tzlocal
 from base64 import b64encode
 
 from pdml2flow.logging import *
+from pdml2flow.utils import make_argparse_help_safe
 from pdml2flow.conf import Conf
 from pdml2flow.autovivification import getitem_by_path
 from pdml2flow.plugin import Plugin2
-
-def _make_argparse_help_safe(s):
-    """Make strings safe for argparse's help.
-
-    Argparse probably uses internally python2 style string formatting.
-    Make user supplied strings safe for this.
-    """
-    try:
-        return s.replace('%', '%%')
-    except AttributeError:
-        return s
 
 HEADER = { 
     'Content-type': 'application/json',
@@ -39,7 +29,7 @@ argparser.add_argument(
     type = str,
     default = ES_HOST_DEFAULT,
     help = 'Elasticsearch api host [default: {}]'.format(
-        _make_argparse_help_safe(ES_HOST_DEFAULT)
+        make_argparse_help_safe(ES_HOST_DEFAULT)
     ),
 )
 
@@ -50,7 +40,7 @@ argparser.add_argument(
     type = int,
     default = ES_PORT_DEFAULT,
     help = 'Elasticsearch api port [default: {}]'.format(
-        _make_argparse_help_safe(ES_PORT_DEFAULT)
+        make_argparse_help_safe(ES_PORT_DEFAULT)
     ),
 )
 
@@ -61,7 +51,7 @@ argparser.add_argument(
     type = str,
     default = ES_FLOW_INDEX_DEFAULT,
     help = 'Index name [default: {}]'.format(
-        _make_argparse_help_safe(ES_FLOW_INDEX_DEFAULT)
+        make_argparse_help_safe(ES_FLOW_INDEX_DEFAULT)
     ),
 )
 
@@ -72,7 +62,7 @@ argparser.add_argument(
     type = str,
     default = ES_FLOW_TYPE_DEFAULT,
     help = 'Type [default: {}]'.format(
-        _make_argparse_help_safe(ES_FLOW_TYPE_DEFAULT)
+        make_argparse_help_safe(ES_FLOW_TYPE_DEFAULT)
     ),
 )
 
@@ -83,7 +73,7 @@ argparser.add_argument(
     dest = 'ES_NO_FRAMES',
     default = ES_NO_FRAMES_DEFAULT,
     help = 'Do not store frames [default: {}]'.format(
-        _make_argparse_help_safe(ES_NO_FRAMES_DEFAULT)
+        make_argparse_help_safe(ES_NO_FRAMES_DEFAULT)
     ),
 )
 
@@ -94,7 +84,7 @@ argparser.add_argument(
     type = str,
     default = ES_FRAME_INDEX_DEFAULT,
     help = 'Index name [default: {}]'.format(
-        _make_argparse_help_safe(ES_FRAME_INDEX_DEFAULT)
+        make_argparse_help_safe(ES_FRAME_INDEX_DEFAULT)
     ),
 )
 
@@ -105,7 +95,7 @@ argparser.add_argument(
     type = str,
     default = ES_FRAME_TYPE_DEFAULT,
     help = 'Type [default: {}]'.format(
-        _make_argparse_help_safe(ES_FRAME_TYPE_DEFAULT)
+        make_argparse_help_safe(ES_FRAME_TYPE_DEFAULT)
     ),
 )
 
@@ -116,7 +106,7 @@ argparser.add_argument(
     type = str,
     default = ES_USER_DEFAULT,
     help = 'Elasticsearch user [default: {}]'.format(
-        _make_argparse_help_safe(ES_USER_DEFAULT)
+        make_argparse_help_safe(ES_USER_DEFAULT)
     ),
 )
 
@@ -127,7 +117,7 @@ argparser.add_argument(
     type = str,
     default = ES_PASSWORD_DEFAULT,
     help = 'Elasticsearch password [default: {}]'.format(
-        _make_argparse_help_safe(ES_PASSWORD_DEFAULT)
+        make_argparse_help_safe(ES_PASSWORD_DEFAULT)
     ),
 )
 
@@ -138,7 +128,7 @@ argparser.add_argument(
     type = str,
     default = ES_TIMESTAMP_FIELD_DEFAULT,
     help = 'Elasticsearch timestamp_field [default: {}]'.format(
-        _make_argparse_help_safe(ES_TIMESTAMP_FIELD_DEFAULT)
+        make_argparse_help_safe(ES_TIMESTAMP_FIELD_DEFAULT)
     ),
 )
 
@@ -149,7 +139,7 @@ argparser.add_argument(
     type = str,
     default = ES_TIMESTAMP_FMT_DEFAULT,
     help = 'Elasticsearch timestamp format [default: {}]'.format(
-        _make_argparse_help_safe(ES_TIMESTAMP_FMT_DEFAULT)
+        make_argparse_help_safe(ES_TIMESTAMP_FMT_DEFAULT)
     ),
 )
 
@@ -160,7 +150,7 @@ argparser.add_argument(
     dest = 'ES_UPDATE_FLOWS',
     default = ES_UPDATE_FLOWS_DEFAULT,
     help = 'Wirte flows to elastic search early and keep them up to date [default: {}]'.format(
-        _make_argparse_help_safe(ES_UPDATE_FLOWS_DEFAULT)
+        make_argparse_help_safe(ES_UPDATE_FLOWS_DEFAULT)
     ),
 )
 
@@ -171,7 +161,7 @@ argparser.add_argument(
     type = int,
     default = ES_UPDATE_FLOWS_INTERVAL_DEFAULT,
     help = 'Elasticsearch update interval [default: {}]'.format(
-        _make_argparse_help_safe(ES_UPDATE_FLOWS_INTERVAL_DEFAULT)
+        make_argparse_help_safe(ES_UPDATE_FLOWS_INTERVAL_DEFAULT)
     ),
 )
 
@@ -182,7 +172,7 @@ argparser.add_argument(
     dest = 'ES_USE_TIME_NOW',
     default = ES_USE_TIME_NOW_DEFAULT,
     help = 'Do not store frames [default: {}]'.format(
-        _make_argparse_help_safe(ES_USE_TIME_NOW_DEFAULT)
+        make_argparse_help_safe(ES_USE_TIME_NOW_DEFAULT)
     ),
 )
 

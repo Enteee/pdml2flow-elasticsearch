@@ -43,6 +43,12 @@ $(pdml2flow +elasticsearch -h)
 
 ## Test environment
 
+docker-compose.yml:
+
+\`\`\`yaml
+$(cat "${TOPLEVEL}/docker-compose.yml")
+\`\`\`
+
 \`\`\`shell
 $ sysctl -w vm.max_map_count=262144
 $ docker-compose up
@@ -50,10 +56,6 @@ $ docker-compose up
 
 * Elasticsearch: http://localhost:9000
 * Kibana: http://localhost:5601
-
-\`\`\`yaml
-$(cat "${TOPLEVEL}/docker-compose.yml")
-\`\`\`
 
 [pdml2flow]: https://github.com/Enteee/pdml2flow
 [python]: https://www.python.org/
