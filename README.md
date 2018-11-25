@@ -8,7 +8,14 @@ _Saves [pdml2flow] output in Elasticsearch_
 
 ## Prerequisites
 
-
+* [python]:
+  - 3.4
+  - 3.5
+  - 3.5-dev
+  - 3.6
+  - 3.6-dev
+  - 3.7-dev
+  - nightly
 * [pip](https://pypi.python.org/pypi/pip)
 
 ## Installation
