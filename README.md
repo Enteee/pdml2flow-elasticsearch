@@ -61,8 +61,8 @@ optional arguments:
   --timestamp-fmt ES_TIMESTAMP_FMT
                         Elasticsearch timestamp format [default:
                         %Y-%m-%dT%H:%M:%S%z]
-  --update-flows        Wirte flows to elastic search early and keep them up
-                        to date [default: False]
+  --update-flows        Wirte flows to Elasticsearch early and keep them up to
+                        date [default: False]
   --update-interval ES_UPDATE_FLOWS_INTERVAL__S
                         Elasticsearch update interval [default: 60]
   --use-time-now        Do not store frames [default: False]
@@ -72,7 +72,7 @@ optional arguments:
 
 ## Test environment
 
-docker-compose.yml:
+`docker-compose.yml`:
 
 ```yaml
 version: '2.2'
@@ -104,6 +104,8 @@ volumes:
   esdata1:
     driver: local
 ```
+
+Start the environment:
 
 ```shell
 $ sysctl -w vm.max_map_count=262144

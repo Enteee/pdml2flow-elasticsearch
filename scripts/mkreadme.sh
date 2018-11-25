@@ -43,11 +43,13 @@ $(pdml2flow +elasticsearch -h)
 
 ## Test environment
 
-docker-compose.yml:
+\`docker-compose.yml\`:
 
 \`\`\`yaml
 $(cat "${TOPLEVEL}/docker-compose.yml")
 \`\`\`
+
+Start the environment:
 
 \`\`\`shell
 $ sysctl -w vm.max_map_count=262144
