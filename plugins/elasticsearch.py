@@ -172,7 +172,7 @@ argparser.add_argument(
     dest = 'ES_UPDATE_FLOWS',
     default = ES_UPDATE_FLOWS_DEFAULT,
     help = make_argparse_help_safe(
-        'Wirte flows to elastic search early and keep them up to date [default: {}]'.format(
+        'Wirte flows to Elasticsearch early and keep them up to date [default: {}]'.format(
             ES_UPDATE_FLOWS_DEFAULT
         )
     ),
